@@ -1,4 +1,5 @@
 require('dotenv').config()
+const { parse } = require('dotenv')
 const TelegramBot = require('node-telegram-bot-api')
 
 // replace the value below with the Telegram token you receive from @BotFather
@@ -23,20 +24,31 @@ bot.onText(/\/echo (.+)/, (msg, match) => {
 // messages.
 bot.on('message', async (msg) => {
   const chatId = msg.chat.id
-  let message = 'Không hợp lệ'
   if (msg.text === '/gia_vang') {
     const res = await fetch('https://www.mihong.vn/api/v1/gold/prices/current')
     const data = await res.json()
-    const thead = `###\t\t\t \t\t\t Giá bán \t\t\t Giá Mua`
-    const vang999 = data.data.find((item) => item.code === '999')
-    message =
-      thead +
-      '\n' +
-      `999: \t\t\t ${vang999.sellingPrice.toLocaleString(
-        'vi-VN'
-      )} \t\t\t ${vang999.buyingPrice.toLocaleString('vi-VN')}`
-  }
+    const tableData = [
+      ['Loại Vàng ', ' Giá Mua\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t', ' Giá Bán']
+    ]
+    const bodyData = []
 
-  // send a message to the chat acknowledging receipt of their message
-  bot.sendMessage(chatId, message)
+    const bodyTable = data.data.filter((item) =>
+      ['SJC', '999', '680'].includes(item.code)
+    )
+    bodyTable.map((item) =>
+      bodyData.push([
+        item.code,
+        item.sellingPrice.toLocaleString('vi-VN'),
+        item.buyingPrice.toLocaleString('vi-VN')
+      ])
+    )
+    const tabkeMarkdown = tableData.map((row) => row.join('\t| ')).join('\n')
+    const bodyMarkdown = bodyData
+      .map((row) => row.join('\t\t\t\t\t\t\t\t\t\t\t\t\t\t' + ' | '))
+      .join('\n')
+
+    bot.sendMessage(chatId, tabkeMarkdown + '\n' + bodyMarkdown)
+  } else {
+    bot.sendMessage(chatId, 'Error')
+  }
 })
