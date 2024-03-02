@@ -1,7 +1,7 @@
+const http = require('node:http')
 require('dotenv').config()
-const { parse } = require('dotenv')
+const hostname = '127.0.0.1'
 const TelegramBot = require('node-telegram-bot-api')
-
 // replace the value below with the Telegram token you receive from @BotFather
 const token = process.env.TOKEN_BOT
 // Create a bot that uses 'polling' to fetch new updates
@@ -51,4 +51,13 @@ bot.on('message', async (msg) => {
   } else {
     bot.sendMessage(chatId, 'Error')
   }
+})
+const port = 3000
+const server = http.createServer((req, res) => {
+  res.statusCode = 200
+  res.setHeader('Content-Type', 'text/plain')
+  res.end('Hello World\n')
+})
+server.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`)
 })
