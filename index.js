@@ -1,12 +1,14 @@
 const http = require('node:http')
-const { token } = require('./utils/token')
+const { token_bot } = require('./utils/token')
+console.log({ token_bot })
 require('dotenv').config()
 const hostname = '127.0.0.1'
 const port = 3000
 const server = http.createServer((req, res) => {
   const TelegramBot = require('node-telegram-bot-api')
   // replace the value below with the Telegram token you receive from @BotFather
-  const token = process.env.TOKEN_BOT ? process.env.TOKEN_BOT : token.token
+  const token = process.env.TOKEN_BOT ? process.env.TOKEN_BOT : token_bot
+  console.log({ token })
   // Create a bot that uses 'polling' to fetch new updates
   const bot = new TelegramBot(token, { polling: true })
 
