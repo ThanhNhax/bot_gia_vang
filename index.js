@@ -4,25 +4,19 @@ console.log({ token_bot })
 require('dotenv').config()
 const hostname = '127.0.0.1'
 const port = 3000
+const server = http.createServer((req, res) => {
+  res.statusCode = 200
+  res.setHeader('Content-Type', 'text/plain')
+  res.end('Hello World\n')
+})
+server.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`)
+})
+
 const TelegramBot = require('node-telegram-bot-api')
 
 const bot = new TelegramBot(token_bot, { polling: true })
 
-// Matches "/echo [whatever]"
-bot.onText(/\/echo (.+)/, (msg, match) => {
-  // 'msg' is the received Message from Telegram
-  // 'match' is the result of executing the regexp above on the text content
-  // of the message
-
-  const chatId = msg.chat.id
-  const resp = match[1] // the captured "whatever"
-
-  // send back the matched "whatever" to the chat
-  bot.sendMessage(chatId, resp)
-})
-
-// Listen for any kind of message. There are different kinds of
-// messages.
 bot.on('message', async (msg) => {
   const chatId = msg.chat.id
   if (msg.text === '/gia_vang') {
@@ -32,7 +26,6 @@ bot.on('message', async (msg) => {
       ['Loại Vàng ', ' Giá Mua\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t', ' Giá Bán']
     ]
     const bodyData = []
-
     const bodyTable = data.data.filter((item) =>
       ['SJC', '999', '680'].includes(item.code)
     )
@@ -52,12 +45,4 @@ bot.on('message', async (msg) => {
   } else {
     bot.sendMessage(chatId, 'Error')
   }
-})
-const server = http.createServer((req, res) => {
-  res.statusCode = 200
-  res.setHeader('Content-Type', 'text/plain')
-  res.end('Hello World\n')
-})
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`)
 })
