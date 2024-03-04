@@ -1,6 +1,5 @@
 const http = require('node:http')
 const { token_bot } = require('./utils/token')
-console.log({ token_bot })
 require('dotenv').config()
 const hostname = '127.0.0.1'
 const port = 3000
